@@ -8,7 +8,7 @@ error_reporting(E_ALL);
  */
 //require 'Database.php';
 
-class Variable
+class Profesional
 {
     function __construct()
     {
@@ -21,15 +21,14 @@ class Variable
      */
     public static function getAll()
     {
-        $consulta = "SELECT * FROM var_variables";
+        $consulta = "SELECT * FROM pro_profesionales";
         try {
             // Preparar sentencia
             $comando = Database::getInstance()->getDb()->prepare($consulta);
             // Ejecutar sentencia preparada
             $comando->execute();
 
-            $row = $comando->fetch(PDO::FETCH_ASSOC);
-            return $row;
+            return $comando->fetchAll(PDO::FETCH_ASSOC);
 
         } catch (PDOException $e) {
             return $e;
@@ -46,7 +45,7 @@ class Variable
     public static function getById($id)
     {
         // Consulta de la meta
-        $consulta = "SELECT * FROM var_variables WHERE res_id = ?";
+        $consulta = "SELECT * FROM pro_profesionales WHERE pro_id = ?";
 
         try {
             // Preparar sentencia
@@ -75,24 +74,24 @@ class Variable
      */
     public static function update(
         $id,
-        $viajes,
-		$encomiendas,
-		$dias
+        $nombre,
+		$telefono,
+		$direccion
     )
     {
         // Creando consulta UPDATE
-        $consulta = "UPDATE var_variables" .
-            " SET LIMITE_VIAJES=?, LIMITE_ENCOMIENDAS=?, DIAS_BLOQUEADOS=? " .
-            "WHERE var_id=?";
+        $consulta = "UPDATE pro_profesionales" .
+            " SET pro_nombre=?, pro_telefono=?, pro_direccion=? " .
+            "WHERE pro_id=?";
 
         // Preparar la sentencia
         $cmd = Database::getInstance()->getDb()->prepare($consulta);
 
         // Relacionar y ejecutar la sentencia
         $cmd->execute(array(
-        $viajes,
-		$encomiendas,
-		$dias,
+        $nombre,
+		$telefono,
+		$direccion,
 		$id));
 
         return $cmd;
@@ -107,13 +106,14 @@ class Variable
      */
     public static function insert(
 		$nombre,
-        $valor
+        $direccion,
+        $telefono
     )
     {
         // Sentencia INSERT
-        $comando = "INSERT INTO var_variables ( " .
-            "var_nombre, var_valor)" .
-            " VALUES( ?, ?)";
+        $comando = "INSERT INTO pro_profesionales ( " .
+            "pro_nombre, pro_telefono, pro_direccion)" .
+            " VALUES( ?, ?, ?)";
 
         // Preparar la sentencia
         $sentencia = Database::getInstance()->getDb()->prepare($comando);
@@ -121,7 +121,8 @@ class Variable
         return $sentencia->execute(
             array(
 				$nombre,
-				$valor
+                $direccion,
+                $telefono
             )
         );
 
@@ -136,7 +137,7 @@ class Variable
     public static function delete($id)
     {
         // Sentencia DELETE
-        $comando = "DELETE FROM var_variables WHERE var_id=?";
+        $comando = "DELETE FROM pro_profesionales WHERE pro_id=?";
 
         // Preparar la sentencia
         $sentencia = Database::getInstance()->getDb()->prepare($comando);

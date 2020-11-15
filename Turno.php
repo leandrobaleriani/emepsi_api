@@ -198,7 +198,27 @@ class Turno
             return $e -> getMessage();
         }
     }
-	
+    
+    public static function getPendientes($fecha)
+    {
+        // Consulta de la meta
+        $consulta = "SELECT * FROM tur_turnos where tur_estado = 'PENDIENTE' ORDER BY tur_fecha DESC";
+
+        try {
+            // Preparar sentencia
+            $comando = Database::getInstance()->getDb()->prepare($consulta);
+            // Ejecutar sentencia preparada
+            $comando->execute(array($fecha));
+            // Capturar primera fila del resultado
+            return $comando->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            // Aquí puedes clasificar el error dependiendo de la excepción
+            // para presentarlo en la respuesta Json
+            return $e -> getMessage();
+        }
+    }
+
 	public static function getByDeviceId($deviceId)
     {
         // Consulta de la meta

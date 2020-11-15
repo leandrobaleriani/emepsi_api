@@ -7,12 +7,12 @@ error_reporting(E_ALL);
  * Obtiene todas las metas de la base de datos
  */
 require 'Database.php';
-require 'Variable.php';
+require 'Profesional.php';
 
 header('Access-Control-Allow-Origin: *'); 
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 //if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $listado = Variable::getAll();
+    $listado = Profesional::getAll();
 
     if ($listado) {
         echo json_encode($listado);

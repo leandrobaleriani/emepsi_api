@@ -7,13 +7,13 @@ error_reporting(E_ALL);
  * Obtiene todas las metas de la base de datos
  */
 require 'Database.php';
-require 'Reserva.php';
+require 'Turno.php';
 
 header('Access-Control-Allow-Origin: *'); 
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 //if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	
-    $listado = Reserva::getPendientes();
+    $listado = Turno::getPendientes();
 
     if ($listado) {
 

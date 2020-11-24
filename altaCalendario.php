@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require 'Database.php';
-require 'Turno.php';
+require 'Calendario.php';
 
 header('Access-Control-Allow-Origin: *'); 
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
@@ -16,17 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
  
   $params = json_decode($json);
  
-    // Insertar menu
-	$fecha = date_create($params->tur_fecha);
-    $retorno = Turno::insert(
-        date_format($fecha, "Y-m-d"),
-        $params->tur_hora,
-		$params->tur_nombre,
-        $params->tur_detalle,
-		$params->tur_tipo,
-        $params->tur_estado,
-		$params->device_id,
-		$params->tur_telefono);
+  $fecha = date_create($params->cal_dia);
+  $retorno = Calendario::insert(
+	  date_format($fecha, "Y-m-d"),
+	  $params->pro_nombre);
 	
     if($retorno){
 			// Código de éxito

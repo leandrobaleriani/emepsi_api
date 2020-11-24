@@ -109,7 +109,7 @@ class Dispositivo
         // Sentencia INSERT
         $comando = "INSERT INTO dis_dispositivos ( " .
             "dis_device_id, dis_firebase_token)" .
-            " VALUES( :deviceId, :firebaseToken) ON DUPLICATE KEY dis_firebase_token= :firebaseToken";
+            " VALUES( :deviceId, :firebaseToken) ON DUPLICATE KEY UPDATE dis_firebase_token = :firebaseToken";
 
         // Preparar la sentencia
         $sentencia = Database::getInstance()->getDb()->prepare($comando);

@@ -8,7 +8,7 @@ error_reporting(E_ALL);
  */
 //require 'Database.php';
 
-class Turno
+class Calendario
 {
     function __construct()
     {
@@ -21,7 +21,7 @@ class Turno
      */
     public static function getAll()
     {
-        $consulta = "SELECT * FROM tur_turnos ORDER BY tur_fecha DESC";
+        $consulta = "SELECT * FROM cal_calendario";
         try {
             // Preparar sentencia
             $comando = Database::getInstance()->getDb()->prepare($consulta);
@@ -45,7 +45,7 @@ class Turno
     public static function getById($id)
     {
         // Consulta de la meta
-        $consulta = "SELECT * FROM tur_turno WHERE tur_id = ?";
+        $consulta = "SELECT * FROM cal_calendario WHERE cal_id = ?";
 
         try {
             // Preparar sentencia
@@ -75,32 +75,20 @@ class Turno
     public static function update(
         $id,
         $fecha,
-        $hora,
-		$nombre,
-		$detalle,
-		$tipo,
-        $estado,
-        $telefono
-		$deviceId
+        $nombre
     )
     {
         // Creando consulta UPDATE
-        $consulta = "UPDATE tur_turnos" .
-            " SET tur_fecha=?, tur_hora=?, tur_nombre=?, tur_detalle=?, tur_tipo=?, tur_estado=?, device_id=?, tur_telefono=? " .
-            "WHERE tur_id=?";
+        $consulta = "UPDATE cal_calendario" .
+            " SET cal_dia=?, pro_nombre=? " .
+            "WHERE cal_id=?";
 
         // Preparar la sentencia
         $cmd = Database::getInstance()->getDb()->prepare($consulta);
 
         // Relacionar y ejecutar la sentencia
-        $cmd->execute(array($fecha,
-        $hora,
-		$nombre,
-		$detalle,
-		$tipo,
-		$estado,
-        $deviceId,
-        $telefono,
+        $cmd->execute(array($deviceId,
+        $firebaseToken,
 		$id));
 
         return $cmd;
@@ -114,36 +102,20 @@ class Turno
      * @return PDOStatement
      */
     public static function insert(
-		$fecha,
-        $hora,
-		$nombre,
-		$detalle,
-		$tipo,
-		$estado,
-        $deviceId,
-        $telefono
+        $fecha,
+        $nombre
     )
     {
         // Sentencia INSERT
-        $comando = "INSERT INTO tur_turnos ( " .
-            "tur_fecha, tur_hora, tur_nombre, tur_detalle, tur_tipo, tur_estado, device_id, tur_telefono)" .
-            " VALUES( ?, ?, ?, ?, ?, ?, ?, ?)";
+        $comando = "INSERT INTO cal_calendario ( " .
+            "cal_dia, pro_nombre)" .
+            " VALUES( :fecha, :nombre)";
 
         // Preparar la sentencia
         $sentencia = Database::getInstance()->getDb()->prepare($comando);
-
-        return $sentencia->execute(
-            array(
-                $fecha,
-                $hora,
-		        $nombre,
-		        $detalle,
-		        $tipo,
-		        $estado,
-                $deviceId,
-                $telefono
-            )
-        );
+        $sentencia->bindParam(':fecha', $fecha);
+        $sentencia->bindParam(':nombre', $nombre);
+        return $sentencia->execute();
 
     }
 
@@ -156,7 +128,7 @@ class Turno
     public static function delete($id)
     {
         // Sentencia DELETE
-        $comando = "DELETE FROM tur_turnos WHERE tur_id=?";
+        $comando = "DELETE FROM cal_calendario WHERE cal_id=?";
 
         // Preparar la sentencia
         $sentencia = Database::getInstance()->getDb()->prepare($comando);
@@ -164,35 +136,16 @@ class Turno
         return $sentencia->execute(array($id));
     }
 	
-	public static function updateEstado(
-        $id,
-		$estado
-    )
-    {
-        // Creando consulta UPDATE
-        $consulta = "UPDATE tur_turnos" .
-            " SET tur_estado=? " .
-            "WHERE tur_id=?";
-
-        // Preparar la sentencia
-        $cmd = Database::getInstance()->getDb()->prepare($consulta);
-
-        // Relacionar y ejecutar la sentencia
-        $cmd->execute(array($estado, $id));
-
-        return $cmd;
-    }
-	
-	public static function getByFecha($fecha)
+	public static function getByMes($mes)
     {
         // Consulta de la meta
-        $consulta = "SELECT * FROM tur_turnos WHERE tur_fecha = CURDATE() AND tur_estado <> 'CANCELADO'";
+        $consulta = "SELECT * FROM cal_calendario WHERE MONTH(cal_dia) = $mes";
 
         try {
             // Preparar sentencia
             $comando = Database::getInstance()->getDb()->prepare($consulta);
             // Ejecutar sentencia preparada
-            $comando->execute(array($fecha));
+            $comando->execute(array($mes));
             // Capturar primera fila del resultado
             return $comando->fetchAll(PDO::FETCH_ASSOC);
 
@@ -200,46 +153,6 @@ class Turno
             // Aquí puedes clasificar el error dependiendo de la excepción
             // para presentarlo en la respuesta Json
             return $e -> getMessage();
-        }
-    }
-    
-    public static function getPendientes($fecha)
-    {
-        // Consulta de la meta
-        $consulta = "SELECT * FROM tur_turnos where tur_estado = 'PENDIENTE' ORDER BY tur_fecha DESC";
-
-        try {
-            // Preparar sentencia
-            $comando = Database::getInstance()->getDb()->prepare($consulta);
-            // Ejecutar sentencia preparada
-            $comando->execute(array($fecha));
-            // Capturar primera fila del resultado
-            return $comando->fetchAll(PDO::FETCH_ASSOC);
-
-        } catch (PDOException $e) {
-            // Aquí puedes clasificar el error dependiendo de la excepción
-            // para presentarlo en la respuesta Json
-            return $e -> getMessage();
-        }
-    }
-
-	public static function getByDeviceId($deviceId)
-    {
-        // Consulta de la meta
-        $consulta = "SELECT * FROM tur_turnos WHERE device_id = ?";
-
-        try {
-            // Preparar sentencia
-            $comando = Database::getInstance()->getDb()->prepare($consulta);
-            // Ejecutar sentencia preparada
-            $comando->execute(array($deviceId));
-            // Capturar primera fila del resultado
-            return $comando->fetchAll(PDO::FETCH_ASSOC);
-
-        } catch (PDOException $e) {
-            // Aquí puedes clasificar el error dependiendo de la excepción
-            // para presentarlo en la respuesta Json
-            return -1;
         }
     }
 }

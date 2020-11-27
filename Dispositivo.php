@@ -178,7 +178,7 @@ class Dispositivo
 	public static function getByDeviceId($deviceId)
     {
         // Consulta de la meta
-        $consulta = "SELECT * FROM tur_turnos WHERE device_id = ?";
+        $consulta = "SELECT * FROM dis_dispositivos WHERE dis_device_id = ?";
 
         try {
             // Preparar sentencia
@@ -186,7 +186,8 @@ class Dispositivo
             // Ejecutar sentencia preparada
             $comando->execute(array($deviceId));
             // Capturar primera fila del resultado
-            return $comando->fetchAll(PDO::FETCH_ASSOC);
+            $row = $comando->fetch(PDO::FETCH_ASSOC);
+            return $row;
 
         } catch (PDOException $e) {
             // Aquí puedes clasificar el error dependiendo de la excepción

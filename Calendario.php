@@ -73,9 +73,9 @@ class Calendario
 	 * @return PDOStatement
      */
     public static function update(
-        $id,
         $fecha,
-        $nombre
+        $nombre,
+        $id
     )
     {
         // Creando consulta UPDATE
@@ -87,8 +87,8 @@ class Calendario
         $cmd = Database::getInstance()->getDb()->prepare($consulta);
 
         // Relacionar y ejecutar la sentencia
-        $cmd->execute(array($deviceId,
-        $firebaseToken,
+        $cmd->execute(array($fecha,
+        $nombre,
 		$id));
 
         return $cmd;

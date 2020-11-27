@@ -144,6 +144,27 @@ class Profesional
 
         return $sentencia->execute(array($id));
     }
+
+    public static function getByFecha()
+    {
+        // Consulta de la meta
+        $consulta = "SELECT p.* FROM pro_profesionales p INNER JOIN cal_calendario c on c.pro_nombre = p.pro_nombre WHERE cal_dia = CURDATE()";
+
+        try {
+            // Preparar sentencia
+            $comando = Database::getInstance()->getDb()->prepare($consulta);
+            // Ejecutar sentencia preparada
+            $comando->execute();
+            // Capturar primera fila del resultado
+            $row = $comando->fetch(PDO::FETCH_ASSOC);
+            return $row;
+
+        } catch (PDOException $e) {
+            // Aquí puedes clasificar el error dependiendo de la excepción
+            // para presentarlo en la respuesta Json
+            return $e -> getMessage();
+        }
+    }
 }
 
 ?>

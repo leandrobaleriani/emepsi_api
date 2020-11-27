@@ -45,7 +45,7 @@ class Turno
     public static function getById($id)
     {
         // Consulta de la meta
-        $consulta = "SELECT * FROM tur_turno WHERE tur_id = ?";
+        $consulta = "SELECT * FROM tur_turnos WHERE tur_id = ?";
 
         try {
             // Preparar sentencia
@@ -80,7 +80,7 @@ class Turno
 		$detalle,
 		$tipo,
         $estado,
-        $telefono
+        $telefono,
 		$deviceId
     )
     {
@@ -203,7 +203,7 @@ class Turno
         }
     }
     
-    public static function getPendientes($fecha)
+    public static function getPendientes()
     {
         // Consulta de la meta
         $consulta = "SELECT * FROM tur_turnos where tur_estado = 'PENDIENTE' ORDER BY tur_fecha DESC";
@@ -212,7 +212,7 @@ class Turno
             // Preparar sentencia
             $comando = Database::getInstance()->getDb()->prepare($consulta);
             // Ejecutar sentencia preparada
-            $comando->execute(array($fecha));
+            $comando->execute();
             // Capturar primera fila del resultado
             return $comando->fetchAll(PDO::FETCH_ASSOC);
 

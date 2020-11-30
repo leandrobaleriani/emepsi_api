@@ -166,19 +166,20 @@ class Turno
 	
 	public static function updateEstado(
         $id,
-		$estado
+        $estado,
+        $hora
     )
     {
         // Creando consulta UPDATE
         $consulta = "UPDATE tur_turnos" .
-            " SET tur_estado=? " .
+            " SET tur_estado=?, tur_hora=? " .
             "WHERE tur_id=?";
 
         // Preparar la sentencia
         $cmd = Database::getInstance()->getDb()->prepare($consulta);
 
         // Relacionar y ejecutar la sentencia
-        $cmd->execute(array($estado, $id));
+        $cmd->execute(array($estado, $hora, $id));
 
         return $cmd;
     }

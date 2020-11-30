@@ -15,28 +15,34 @@ header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 
 	$id = $_GET['id'];
 	$estado = $_GET['estado'];
-	
-	$retorno = Turno::updateEstado($id,$estado);
+	$hora = $_GET['hora'];
+
+	$retorno = Turno::updateEstado($id,$estado, $hora);
 	
 	if($retorno){
 
 		$turno = Turno::getById($id);
 
 		if ($turno) {
-
 			$deviceId = $turno['device_id'];
 
 			$dispositivo = Dispositivo::getByDeviceId($deviceId);
 
 			if ($dispositivo) {
-
 				$regId = $dispositivo['dis_firebase_token'];
 
 				$notification = array();
 				$arrNotification= array();
 				$arrData = array();
-				$arrNotification["body"] ="Su turno fue ". $estado . 
+				
+				if($hora == "") {
+					$arrNotification["body"] ="Su turno fue ". $estado . 
 					". En breve nos estaremos comunicando al número de telefono ingresado.";
+				} else {
+					$arrNotification["body"] ="Su turno fue ". $estado . 
+					". Nos estaremos comunicando con usted en el siguiente horario: ". $hora .".";
+				}
+				
 				$arrNotification["title"] = "Estado de su Solicitud";
 				$arrNotification["sound"] = "default";
 				$arrNotification["type"] = 1;

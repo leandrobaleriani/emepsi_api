@@ -107,24 +107,22 @@ class Profesional
     public static function insert(
 		$nombre,
         $direccion,
-        $telefono
+        $telefono,
+        $token
     )
     {
         // Sentencia INSERT
         $comando = "INSERT INTO pro_profesionales ( " .
-            "pro_nombre, pro_telefono, pro_direccion)" .
-            " VALUES( ?, ?, ?)";
+            "pro_nombre, pro_telefono, pro_direccion, pro_token)" .
+            " VALUES( :proNombre, :proTelefono, :proDireccion, :firebaseToken) ON DUPLICATE KEY UPDATE pro_token = :firebaseToken";
 
         // Preparar la sentencia
         $sentencia = Database::getInstance()->getDb()->prepare($comando);
-
-        return $sentencia->execute(
-            array(
-				$nombre,
-                $direccion,
-                $telefono
-            )
-        );
+        $sentencia->bindParam(':proNombre', $nombre);
+        $sentencia->bindParam(':proTelefono', $telefono);
+        $sentencia->bindParam(':proDireccion', $direccion);
+        $sentencia->bindParam(':firebaseToken', $token);
+        return $sentencia->execute();
 
     }
 

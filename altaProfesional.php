@@ -19,7 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $retorno = Profesional::insert(
         $params->pro_nombre,
 		$params->pro_direccion,
-        $params->pro_telefono);
+		$params->pro_telefono,
+		$params->pro_token);
 	
     if($retorno){
 			// Código de éxito

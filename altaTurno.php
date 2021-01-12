@@ -6,6 +6,8 @@ error_reporting(E_ALL);
 
 require 'Database.php';
 require 'Turno.php';
+require 'Profesional.php';
+require 'FCM_Web.php';
 
 header('Access-Control-Allow-Origin: *'); 
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
@@ -28,19 +30,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$params->device_id,
 		$params->tur_telefono);
 	
-    if($retorno){
-			// Código de éxito
-			print json_encode(
-				array(
-					'estado' => '1',
-					'mensaje' => 'Creación exitosa')
-			);
-		} else{
-			// Código de falla
-			print json_encode(
-				array(
-					'estado' => '2',
-					'mensaje' => 'Creación fallida')
-			);
+		if($retorno){
+
+			$profesionales = Profesional::getAll();
+
+			if ($profesionales) {
+				foreach ($profesionales as $pro) {
+					$regId = $pro['pro_token'];
+	
+					$notification = array();
+					$arrNotification= array();
+					$arrData = array();
+					
+					$arrNotification["body"] ="Se ha registrado un turno del tipo ". $params->tur_tipo . 
+						".\nDatos ingresados: \nNombre: ". $params->tur_nombre 
+						."\nTelefono: ". $params->tur_telefono
+						."\nDetalle: ". $params->tur_detalle;
+					
+					$arrNotification["title"] = "Solicitud de Turno";
+					$arrNotification["sound"] = "default";
+					$arrNotification["type"] = 1;
+					
+					$fcm = new FCM();
+					$result = $fcm->send_notification($regId, $arrNotification,"");
+				}
+	
+			}
+				// Código de éxito
+				echo "1";
+			} else{
+				// Código de falla
+				echo "2";
+			}		
 		}
-}
